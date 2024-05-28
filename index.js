@@ -1,8 +1,22 @@
 var express = require('express');
 const multer = require('multer')
-const upload = multer({dest: 'uploads/'})
+// const upload = multer({dest: 'uploads/'})
 var cors = require('cors');
 require('dotenv').config()
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/')
+  },
+  filename: function (req, file, cb) {
+    const originalFilename = file.originalname
+    const fileExtension = originalFilename.split('.').pop()
+    const uniqueSuffix =  Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + fileExtension)
+  }
+})
+
+const upload = multer({ storage: storage })
 
 var app = express();
 
